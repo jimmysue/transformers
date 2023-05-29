@@ -213,7 +213,7 @@ def compute_segments(
             mask_probs.unsqueeze(0), size=target_size, mode="bilinear", align_corners=False
         )[0]
 
-    current_segment_id = 0
+    current_segment_id = latest_segment_id = 0
 
     # Weigh each mask by its prediction score
     mask_probs *= pred_scores.view(-1, 1, 1)
@@ -234,7 +234,8 @@ def compute_segments(
             if pred_class in stuff_memory_list:
                 current_segment_id = stuff_memory_list[pred_class]
             else:
-                current_segment_id += 1
+                latest_segment_id += 1
+                current_segment_id = 1
 
             # Add current object segment to final segmentation map
             segmentation[mask_k] = current_segment_id
